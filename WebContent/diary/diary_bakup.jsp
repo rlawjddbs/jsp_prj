@@ -10,11 +10,9 @@
 <title>Insert title here</title>
 <link rel="stylesheet" type="text/css" href="http://localhost:8080/jsp_prj/common/css/main_v190130.css" />
 <link href="https://fonts.googleapis.com/css?family=Gugi" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Jua" rel="stylesheet">
 <style type="text/css">
 	body{font-family: 'Gugi', cursive;}
 	th{font-family: 'Gugi', cursive;}
-	td{font-family:'Jua', sans-serif;}
 	#wrap{ margin: 0px auto; width:800px; height:860px; }
 	#header{ mwidth:800px; height:140px; background:#FFF url('http://localhost:8080/jsp_prj/common/images/header_bg.png'); position:relative; }
 	#headerTitle{ font-family: HY견고딕, 고딕; font-size: 35px; font-weight:bold; text-align:center; position:absolute; left:300px; top:30px; }
@@ -29,22 +27,18 @@
 	#diaryTitle{ text-align:center; margin-bottom: 10px; margin-top:20px;}
 	#diaryToday{ width:100px; font-size:16px; font-size:27px; }
 	#diaryTitle > img:nth-of-type(3){display:inline-block; margin-top:10px;}
-	.diaryTd{ width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px;  }
-	.blankTd{ width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px; color:#ccc; }
+	.diaryTd{ width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px; box-sizing:border-box; }
+	.blankTd{ width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px; box-sizing:border-box; color:#ccc; }
 	
 	.sunColor{ font-size:16px; color:#ED4C67; }
 	.weekColor{ color:#222; }
 	.satColor{ color: #12CBC4; font-size:16px; }
 	.todayColor{ color:blue; font-size:18px;}
 	
-	.todayTd{ 
-		width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px; color:blue; background-color:#C4E538;
+	.today{ 
+		width:100px; height:60px; border:1px solid #ccc; text-align:right; font-weight:bold; vertical-align:top; padding:5px 10px; box-sizing:border-box; color:blue; background-color:#C4E538;
+		/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#febbbb+0,fe9090+45,ff5c5c+100;Red+3D+%231 */
 		box-shadow:0 0px 15px #C4E538;
-		color: #FFF;
-    	text-shadow: 0 0 5px black;
-	 }
-	 .todayTd .weekColor{
-	 	color:#fff;
 	 }
 	/* 달력 설정 끝 */
 		
@@ -158,38 +152,35 @@
 				public static final int START_DAY = 1;
 			%>
 			<%
-			Calendar cal = Calendar.getInstance();
-			// 오늘을 저장
-			StringBuilder todate = new StringBuilder();
-			todate.append(cal.get(Calendar.YEAR)).append(cal.get(Calendar.MONTH)+1)
-			.append(cal.get(Calendar.DAY_OF_MONTH));
-			
-			String param_month = request.getParameter("param_month");
-			if(param_month!=null && !"".equals(param_month)){//파라메터 월이 존재하면 현재 캘린더 객체의 월을 변경
-				cal.set(Calendar.MONTH, Integer.parseInt(param_month)-1);
-			}
-			String param_year = request.getParameter("param_year");
-			if(param_year!=null && !"".equals(param_year)){//1월에서 밑으로 가면 연도를 변경
-				cal.set(Calendar.YEAR, Integer.parseInt(param_year));
-			}
-			
-			int nowYear = cal.get(Calendar.YEAR);
-			int nowDay = cal.get(Calendar.DAY_OF_MONTH);
-			int nowMonth = cal.get(Calendar.MONTH)+1;
+				Calendar cal = Calendar.getInstance();
+				Calendar prevCal = Calendar.getInstance();
+				Calendar tempCal = Calendar.getInstance();
+				int nowYear = 0;
+				int nowMonth = 0;
+				int nowDay = cal.get(Calendar.DAY_OF_MONTH);
+				
+				String param_month = request.getParameter("param_month");
+				
+				if(param_month != null && !"".equals(param_month)){ // 파라메터 월이 존재하면 
+					cal.set(Calendar.MONTH, Integer.parseInt(param_month)-1);
+				} // end if
+				
+				nowMonth = cal.get(Calendar.MONTH)+1;
+				
+				String param_year = request.getParameter("param_year");
+				
+				if(param_year != null && !"".equals(param_year)){ // 파라메터 월이 존재하면 
+					cal.set(Calendar.YEAR, Integer.parseInt(param_year));
+				} // end if
+				
+				nowYear = cal.get(Calendar.YEAR);
 				
 				
 				pageContext.setAttribute("nowYear", nowYear);
 				pageContext.setAttribute("nowMonth", nowMonth);
 				pageContext.setAttribute("nowDay", nowDay);
 				
-				boolean toDayFlag = false;
-				StringBuilder nowDate = new StringBuilder();
-				nowDate.append(nowYear).append(nowMonth).append(nowDay);
 				
-				log(todate+" / "+nowDate+" / "+ toDayFlag);
-				if(todate.toString().equals(nowDate.toString())){
-					toDayFlag = true;
-				} // end if
 			%>
 			<form action="diary.jsp" method="post" name="diaryFrm">
 				<input type="hidden" name="param_month" />
@@ -217,33 +208,27 @@
 					</tr>
 					<tr>
 						<%
-								String dayClass = ""; // 요일별 색상
-								String todayCss = ""; // 오늘이거나 평일의 TD색
-								int day = 0;//달력에 일을 채울 변수
-								
-								
-								// 매월마다 끝나는 날짜가 다르기 때문에 무한 루프를 사용한다.
-								for(int tempDay = 1; ; tempDay++){
-									cal.set(Calendar.DAY_OF_MONTH, tempDay);//임시 일자를 설정한다. 
-									// out.println(cal.get(Calendar.DAY_OF_MONTH)+"/"+tempDay);
-									if(cal.get(Calendar.DAY_OF_MONTH)!= tempDay){
-										
-										int week=cal.get(Calendar.DAY_OF_WEEK);
-										int nextMonth = cal.get(Calendar.MONTH)+1;
-										if(week != Calendar.SUNDAY){
-											// 마지막날 뒤에 공백만드는 반복문
-											int nextDay = 1;
-											for(int blankTd = week; blankTd < 8; blankTd++){
-												%>
-												<td class="blankTd"><div><%= nextMonth %>/<%= nextDay %></div></td>
-												<%
-												nextDay++;
-											} // end for
-											// 설정된 날까자 지금 달의 일자가 아니라면 마지막 일자 다음날 1일이므로
-											// 반복문을 빠져나간다.
+							String dayClass="";
+							String tdClass="";
+							int today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+							
+							// 매월 마다 끝나는 날짜가 다르기 때문에(length값이 달라지기 때문에) 무한루프를 사용한다.
+							for(int tempDay=1; ; tempDay++){
+								cal.set(Calendar.DAY_OF_MONTH, tempDay); // Calendar 클래스의 인스턴스의 임시 일자를 설정한다.
+								if(cal.get(Calendar.DAY_OF_MONTH) != tempDay){
+									
+									// 설정된 날짜가 현재 일자가 아니라면(set()으로 설정된 날짜값이 i값과 다르다면) 마지막 일자 다음 일이므로 반복문을 빠져나간다.
+									int i=1;
+									for( int blankTd = cal.get(Calendar.DAY_OF_WEEK); blankTd < 8; blankTd++ ){
+										if(cal.get(Calendar.DAY_OF_WEEK)!=1){
+						%>
+										<td class="blankTd"><%=cal.get(Calendar.MONTH)+1 %>/<%=i++ %></td>
+						<%
 										} // end if
-										break;
-									} // end if
+										
+									} // end for
+									break;
+								} // end if
 								
 								// 1일을 출력하기전 공백 출력 (이전 달은 빈칸으로 채워주기)
 								/* if( tempDay == 1){
@@ -251,46 +236,45 @@
 										out.println("<td class=\"diaryTd\"></td>");
 									} // end for
 								} // end if */
-									switch(tempDay){
-									case START_DAY:
-										// 전달의 마지막날
-										cal.set(Calendar.MONTH, nowMonth-2);
-										int prevMonth = cal.get(Calendar.MONTH)+1; // 이전 월
-										int prevLastDay = cal.getActualMaximum(Calendar.DATE); // 이전월의 마지막일
-										
-										cal.set(Calendar.MONTH, nowMonth-1); 
-										// 다시 현재월로 변경하여 공백을 출력 1일에 맞는 공백을 출력
-										int week = cal.get(Calendar.DAY_OF_WEEK);
-										System.out.println( week );
-										for(int blankTd = 1; blankTd<cal.get(Calendar.DAY_OF_WEEK); blankTd++){
-											%>
-												<td class="blankTd"><%= prevMonth %>/<%= prevLastDay - week + blankTd + 1 %></td>
-											<%
-										} // end for
-									} // end switch
-									
-									//요일별 색깔 설정하기
-									switch(cal.get(Calendar.DAY_OF_WEEK)){
-										case Calendar.SATURDAY : dayClass = "satColor";		break;
-										case Calendar.SUNDAY : dayClass = "sunColor";		break;
-										default :	dayClass = "weekColor";							break;
-									} // end switch
-									
-									todayCss="diaryTd"; // 평일의 CSS 설정
-									if(toDayFlag){ // 요청한 년월일과 오늘의 년월일이 같다면
-										if(nowDay == tempDay){ // 오늘일자에만 다른 CSS를 적용한다.
-											todayCss="todayTd";
-										} // end if
-									} // end if
-									
-							%>
-							<form enctype="application/x-www-form-urlencoded"></form>
-									<td class="<%= todayCss%>">
-										<div>
-											<a href="#void"><span class="<%=dayClass%>"><%= tempDay %></span></a>
-										</div>
-									</td>
-							<%
+								switch( tempDay ){
+								case START_DAY:
+									prevCal.set(Calendar.MONTH, cal.get(Calendar.MONTH)-1);
+									tempCal.set(Calendar.MONTH, cal.get(Calendar.MONTH));
+									tempCal.set(Calendar.DAY_OF_MONTH, 1);
+									int firstDate=(prevCal.getActualMaximum(Calendar.DAY_OF_MONTH)) - (tempCal.get(Calendar.DAY_OF_WEEK)-2);
+									for(int blankTd=1; blankTd < cal.get(Calendar.DAY_OF_WEEK); blankTd++){
+						%>
+										<td class="blankTd"><%=nowMonth-1==0?12:nowMonth-1 %>/<%=firstDate++ %></td>
+						<%
+									} // end for
+								} // end switch
+								
+								// 요일별 색 설정
+								switch(cal.get(Calendar.DAY_OF_WEEK)){
+								case Calendar.SUNDAY:
+									dayClass="sunColor";
+									break;
+								case Calendar.SATURDAY:
+									dayClass="satColor";
+									break;
+								default:
+									if( tempDay == today && Calendar.getInstance().get(Calendar.MONTH)+1 == nowMonth && Calendar.getInstance().get(Calendar.YEAR) == nowYear){
+										dayClass="todayColor";
+									} else{
+										dayClass="weekColor";
+									} // end else
+								} //end switch
+								
+								if( tempDay == today && Calendar.getInstance().get(Calendar.MONTH)+1 == nowMonth && Calendar.getInstance().get(Calendar.YEAR) == nowYear ){
+									tdClass="today";
+								} else {
+									tdClass="diaryTd";
+								} // end else
+						%>
+								<td class="<%= tdClass %>">
+									<div><span class="<%= dayClass %>"><%= tempDay %></span></div>
+								</td>
+						<%
 								// 토요일이면 줄 변경
 								switch(cal.get(Calendar.DAY_OF_WEEK)){
 								case Calendar.SATURDAY:

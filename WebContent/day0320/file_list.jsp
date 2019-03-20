@@ -14,7 +14,7 @@
 	#wrap{ margin: 0px auto; width:800px; height:860px;  }
 	#header{ mwidth:800px; height:140px; background:#FFF url('http://localhost:8080/jsp_prj/common/images/header_bg.png'); position:relative; }
 	#headerTitle{ font-family: HY견고딕, 고딕; font-size: 35px; font-weight:bold; text-align:center; position:absolute; left:300px; top:30px; }
-	#container{ width:800px; height:600px;}
+	#container{ width:800px; min-height:600px;}
 	#footer{ width:800px; height:120px; }
 	#footerTitle{ float:right; font-size:15px; padding-top:20px; padding-right: 20px;}
 	td{ text-align:center; font-weight:bold; color:#12CBC4 }
@@ -55,7 +55,7 @@
 							<td><%= sdf.format(new Date(temp.lastModified())) %></td>
 							<td><%= temp.length() %></td>
 						</tr>
-				<%	} // end for 
+				<%	} // end for
 					} else {
 						out.println("<tr><td align=\"center\" colspan=\"4\">업로드된 파일이 존재하지 않습니다.</td></tr>");
 					} // end else
