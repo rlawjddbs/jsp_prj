@@ -23,11 +23,11 @@
 <!-- summernote 관련 library 시작 -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="../common/summernote/bootstrap.js"></script> 
+<script src="../common/summernote/bootstrap.css"></script> 
 
 <link href="../common/summernote/summernote-lite.css" rel="stylesheet">
 <script src="../common/summernote/summernote-lite.min.js"></script>
 <script src="../common/summernote/lang/summernote-ko-KR.js"></script>
-<!-- summernote 관련 library 끝 -->
 
 
 
@@ -47,6 +47,7 @@
 	  });
 	});
 </script>
+<!-- summernote 관련 library 끝 -->
 
 </head>
 <body>

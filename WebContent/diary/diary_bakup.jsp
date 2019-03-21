@@ -175,14 +175,13 @@
 				
 				nowYear = cal.get(Calendar.YEAR);
 				
-				
 				pageContext.setAttribute("nowYear", nowYear);
 				pageContext.setAttribute("nowMonth", nowMonth);
 				pageContext.setAttribute("nowDay", nowDay);
 				
 				
 			%>
-			<form action="diary.jsp" method="post" name="diaryFrm">
+			<form action="diary_bakup.jsp" method="post" name="diaryFrm">
 				<input type="hidden" name="param_month" />
 				<input type="hidden" name="param_year" />
 			</form>

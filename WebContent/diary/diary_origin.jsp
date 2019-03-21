@@ -83,6 +83,14 @@
 				todate.append(cal.get(Calendar.YEAR)).append(cal.get(Calendar.MONTH)+1)
 				.append(cal.get(Calendar.DAY_OF_MONTH));
 				
+				int nowYear = 0;
+				int nowMonth = 0;
+				int nowDay = cal.get(Calendar.DAY_OF_MONTH);
+				
+				// 요청했을 때 해당 월에 없는 달이 존재한다면 
+	            // 다음 달 1일로 설정되기 때문에 모든 달에 존재하는 날짜로 일자를 변경한다.
+				cal.set(Calendar.DAY_OF_MONTH, 1);
+				
 				String param_month = request.getParameter("param_month");
 				if(param_month!=null && !"".equals(param_month)){//파라메터 월이 존재하면 현재 캘린더 객체의 월을 변경
 					cal.set(Calendar.MONTH, Integer.parseInt(param_month)-1);
@@ -92,24 +100,24 @@
 					cal.set(Calendar.YEAR, Integer.parseInt(param_year));
 				}
 				
-				int nowYear = cal.get(Calendar.YEAR);
-				int nowDay = cal.get(Calendar.DAY_OF_MONTH);
-				int nowMonth = cal.get(Calendar.MONTH)+1;
-				
-				
-				pageContext.setAttribute("nowYear", nowYear);
-				pageContext.setAttribute("nowMonth", nowMonth);
-				pageContext.setAttribute("nowDay", nowDay);
+				nowYear = cal.get(Calendar.YEAR);
+                nowMonth = cal.get(Calendar.MONTH) + 1;
+
 				
 				
 				boolean toDayFlag = false;
 				StringBuilder nowDate = new StringBuilder();
+				
 				nowDate.append(nowYear).append(nowMonth).append(nowDay);
 				
 				log(todate+" / "+nowDate+" / "+ toDayFlag);
 				if(todate.toString().equals(nowDate.toString())){
 					toDayFlag = true;
 				} // end if
+				
+				pageContext.setAttribute("nowYear", nowYear);
+				pageContext.setAttribute("nowMonth", nowMonth);
+				pageContext.setAttribute("nowDay", nowDay);
 			%>
 			
 			<form action="diary_origin.jsp" name="diaryFrm" method="post">
@@ -125,7 +133,7 @@
 						<c:out value="${nowYear}"/>.<c:out value="${nowMonth }"/>
 					</span>
 					<a href="#void" onclick="moveMonth(${nowMonth+1==13? 1 : nowMonth+1},${nowMonth+1==13? nowYear+1:nowYear})"><img src="images/btn_next.png" title="다음 월"/></a>
-					<a href="#void" onclick="moveMonth('','')"><img src="images/btn_today.png" title="오늘"/></a>
+					<a href="diary_origin.jsp"><img src="images/btn_today.png" title="오늘"/></a>
 				</div>
 				
 				<div id="diaryContent">
