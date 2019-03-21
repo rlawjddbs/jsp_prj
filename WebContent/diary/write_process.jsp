@@ -3,7 +3,8 @@
 <%@page import="kr.co.sist.util.ShaUtil"%>
 <%@page import="kr.co.sist.util.HangulConv"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"
+    %>
 
 <jsp:useBean id="d_vo" class="kr.co.sist.diary.vo.DiaryVO" scope="page" />
 <jsp:setProperty name="d_vo" property="*" />
@@ -12,18 +13,25 @@
 $(window).load(function(){
 <%
 	d_vo.setPass(ShaUtil.shaEncoding(d_vo.getPass()));
-	DiaryDAO d_dao = DiaryDAO.getInstance();
-	try{
-		d_dao.insertEvent(d_vo);
+	// 새로고침(F5)로 중복 실행 방지 세션
+	Boolean flag = (Boolean)session.getAttribute("writeFlag");
+	if(flag != null && !flag){
+		
+		DiaryDAO d_dao = DiaryDAO.getInstance();
+		try{
+			d_dao.insertEvent(d_vo);
+			session.setAttribute("writeFlag", true);
 %>
-		alert("이벤트가 정상적으로 등록 되었습니다. 작성 성공");
+			alert("이벤트가 정상적으로 등록 되었습니다. 작성 성공");
+			window.location.href="diary.jsp?param_year=${ param.param_year}&param_month=${param.param_month}";
 <%
-	} catch(SQLException sqle){
+		} catch(SQLException sqle){
 %>
-		alert("이벤트가 정상적으로 등록 되지 않았습니다. 죄송합니다.");
+			alert("이벤트가 정상적으로 등록 되지 않았습니다. 죄송합니다.");
 <%
-		sqle.printStackTrace();
-	} // end catch
+			sqle.printStackTrace();
+		} // end catch
+	} // end if
 %>
 });
 </script>

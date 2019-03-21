@@ -1,3 +1,7 @@
+<%@page import="java.sql.SQLException"%>
+<%@page import="java.util.Arrays"%>
+<%@page import="kr.co.sist.diary.vo.MonthVO"%>
+<%@page import="kr.co.sist.diary.dao.DiaryDAO"%>
 <%@page import="java.time.Month"%>
 <%@page import="java.util.Calendar"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -25,7 +29,8 @@ th {
 #wrap {
 	margin: 0px auto;
 	width: 800px;
-	overflow: hidden;
+	/* overflow: hidden; */
+	overflow:visible;
 }
 
 #header {
@@ -48,8 +53,9 @@ th {
 
 #container {
 	width: 800px;
-	overflow: hidden;
-	padding: 20px 10px
+	/* overflow: hidden; */
+	/* padding: 20px 10px; */
+	overflow:visible;
 }
 
 #footer {
@@ -270,6 +276,19 @@ th {
 	  });
 	  
 	}); // ready
+	
+	 function writeEvt(year, month, day, pageFlag, evtCnt){
+		  if( evtCnt > 4 ){
+			  alert("하루에 작성 가능한 이벤트의 수는 5건까지 입니다.");
+			  return;
+		  } // end if
+		  
+		  $("[name='param_year']").val(year);
+		  $("[name='param_month']").val(month);
+		  $("[name='param_day']").val(day);
+		  $("[name='pageFlag']").val(pageFlag);
+		  $("[name='diaryFrm']").submit();
+	  } // writeEvt
 </script>
 <script type="text/javascript">
 
@@ -418,8 +437,10 @@ th {
 				%>
 
 				<form action="diary.jsp" method="post" name="diaryFrm">
-					<input type="hidden" name="param_month" /> <input type="hidden"
-						name="param_year" />
+					<input type="hidden" name="param_month" /> 
+					<input type="hidden" name="param_year" />
+					<input type="hidden" name="param_day" /> 
+					<input type="hidden" name="pageFlag" /> 
 				</form>
 
 				<div id="diaryTitle">
@@ -449,90 +470,132 @@ th {
 								String dayClass = ""; // 요일별 색상
 								String todayCss = ""; // 오늘이거나 평일의 TD색
 								int day = 0;//달력에 일을 채울 변수
-
-								// 매월마다 끝나는 날짜가 다르기 때문에 무한 루프를 사용한다.
-								for (int tempDay = 1;; tempDay++) {
-									cal.set(Calendar.DAY_OF_MONTH, tempDay);//임시 일자를 설정한다. 
-									// out.println(cal.get(Calendar.DAY_OF_MONTH)+"/"+tempDay);
-									if (cal.get(Calendar.DAY_OF_MONTH) != tempDay) {
-
-										int week = cal.get(Calendar.DAY_OF_WEEK);
-										int nextMonth = cal.get(Calendar.MONTH) + 1;
-										if (week != Calendar.SUNDAY) {
-											// 마지막날 뒤에 공백만드는 반복문
-											int nextDay = 1;
-											for (int blankTd = week; blankTd < 8; blankTd++) {
-							%>
-							<td class="blankTd"><div><%=nextMonth%>/<%=nextDay%></div></td>
-							<%
-								nextDay++;
-											} // end for
-												// 설정된 날까자 지금 달의 일자가 아니라면 마지막 일자 다음날 1일이므로
-												// 반복문을 빠져나간다.
+								
+								// 요청되는 년, 월의 모든 이벤트를 조회
+								DiaryDAO d_dao = DiaryDAO.getInstance();
+								try{
+									MonthVO[][] monthEvtData=d_dao.selectMonthEvent(String.valueOf(nowYear), String.valueOf(nowMonth));
+									
+									MonthVO[] dayEvt = null; // 해당 일에 글이 존재한다면 저장할 배열
+									
+									String tempSubject = ""; // 20자 이상인 글을 자르기 잘라 ...을 붙이기 위해 만든 문자열형 변수
+									int evtCnt = 0; // 일자별로 표시되는 이벤트 건수를 제한하기 위해 만든 정수형 변수
+									
+									// 매월마다 끝나는 날짜가 다르기 때문에 무한 루프를 사용한다.
+									for (int tempDay = 1;; tempDay++) {
+										cal.set(Calendar.DAY_OF_MONTH, tempDay);//임시 일자를 설정한다. 
+										// out.println(cal.get(Calendar.DAY_OF_MONTH)+"/"+tempDay);
+										if (cal.get(Calendar.DAY_OF_MONTH) != tempDay) {
+	
+											int week = cal.get(Calendar.DAY_OF_WEEK);
+											int nextMonth = cal.get(Calendar.MONTH) + 1;
+											if (week != Calendar.SUNDAY) {
+												// 마지막날 뒤에 공백만드는 반복문
+												int nextDay = 1;
+												for (int blankTd = week; blankTd < 8; blankTd++) {
+								%>
+								<td class="blankTd"><div><%=nextMonth%>/<%=nextDay%></div></td>
+								<%
+									nextDay++;
+												} // end for
+													// 설정된 날까자 지금 달의 일자가 아니라면 마지막 일자 다음날 1일이므로
+													// 반복문을 빠져나간다.
+											} // end if
+											break;
 										} // end if
-										break;
-									} // end if
-
-									//1일을 출력하기 전 공백을 출력한다.
-									switch (tempDay) {
-									case START_DAY:
-										// 전달의 마지막날
-										cal.set(Calendar.MONTH, nowMonth - 2);
-										int prevMonth = cal.get(Calendar.MONTH) + 1; // 이전 월
-										int prevLastDay = cal.getActualMaximum(Calendar.DATE); // 이전월의 마지막일
-
-										cal.set(Calendar.MONTH, nowMonth - 1);
-										// 다시 현재월로 변경하여 공백을 출력 1일에 맞는 공백을 출력
-										int week = cal.get(Calendar.DAY_OF_WEEK);
-										System.out.println(week);
-										for (int blankTd = 1; blankTd < cal.get(Calendar.DAY_OF_WEEK); blankTd++) {
-							%>
-							<td class="blankTd"><%=prevMonth%>/<%=prevLastDay - week + blankTd + 1%></td>
-							<%
-								} // end for
-									} // end switch
-
-									//요일별 색깔 설정하기
-									switch (cal.get(Calendar.DAY_OF_WEEK)) {
-									case Calendar.SATURDAY:
-										dayClass = "satColor";
-										break;
-									case Calendar.SUNDAY:
-										dayClass = "sunColor";
-										break;
-									default:
-										dayClass = "weekColor";
-										break;
-									} // end switch
-
-									todayCss = "diaryTd"; // 평일의 CSS 설정
-									if (toDayFlag) { // 요청한 년월일과 오늘의 년월일이 같다면
-										if (nowDay == tempDay) { // 오늘일자에만 다른 CSS를 적용한다.
-											todayCss = "todayTd";
+	
+										//1일을 출력하기 전 공백을 출력한다.
+										switch (tempDay) {
+										case START_DAY:
+											// 전달의 마지막날
+											cal.set(Calendar.MONTH, nowMonth - 2);
+											int prevMonth = cal.get(Calendar.MONTH) + 1; // 이전 월
+											int prevLastDay = cal.getActualMaximum(Calendar.DATE); // 이전월의 마지막일
+	
+											cal.set(Calendar.MONTH, nowMonth - 1);
+											// 다시 현재월로 변경하여 공백을 출력 1일에 맞는 공백을 출력
+											int week = cal.get(Calendar.DAY_OF_WEEK);
+											System.out.println(week);
+											for (int blankTd = 1; blankTd < cal.get(Calendar.DAY_OF_WEEK); blankTd++) {
+								%>
+								<td class="blankTd"><%=prevMonth%>/<%=prevLastDay - week + blankTd + 1%></td>
+								<%
+									} // end for
+										} // end switch
+	
+										//요일별 색깔 설정하기
+										switch (cal.get(Calendar.DAY_OF_WEEK)) {
+										case Calendar.SATURDAY:
+											dayClass = "satColor";
+											break;
+										case Calendar.SUNDAY:
+											dayClass = "sunColor";
+											break;
+										default:
+											dayClass = "weekColor";
+											break;
+										} // end switch
+	
+										todayCss = "diaryTd"; // 평일의 CSS 설정
+										if (toDayFlag) { // 요청한 년월일과 오늘의 년월일이 같다면
+											if (nowDay == tempDay) { // 오늘일자에만 다른 CSS를 적용한다.
+												todayCss = "todayTd";
+											} // end if
 										} // end if
+								%>
+								<form enctype="application/x-www-form-urlencoded"></form>
+								<td class="<%=todayCss%>">
+								<%
+									dayEvt = monthEvtData[tempDay-1];
+									evtCnt = 0;
+									if(dayEvt != null){ 
+										// 해당 일자의 이벤트 건수를 저장
+										evtCnt = dayEvt.length;
 									} // end if
+								%>
+									<div>
+										<a href="#void" onclick="writeEvt(${ nowYear }, ${ nowMonth }, <%= tempDay %>,'write_form',<%= evtCnt %>)">
+											<span class="<%=dayClass%>">
+												<%=tempDay%>
+											</span>
+										</a>
+									</div>
+									<div>
+									<% if(dayEvt != null){ 
+											for(int i=0; i < dayEvt.length; i++){
+											tempSubject = dayEvt[i].getSubject();
+											if( tempSubject.length() > 21){
+												tempSubject=tempSubject.substring(0, 20)+"...";
+											} // end if
+									%>
+										<%-- <img src="images/evtflag.png" title="<%= dayEvt[i].getSubject() %>"/> --%>
+										<img src="images/evtflag.png" title="<%= tempSubject %>"/>
+									<%} // end for
+										} // end if %>
+									</div>
+								</td>
+								<%
+									//토요일이면 줄변경
+										switch (cal.get(Calendar.DAY_OF_WEEK)) {
+										case Calendar.SATURDAY:
+											out.println("</tr><tr>");
+										}//end switch
+									} //end for
+								} catch ( SQLException sqle ){
+									sqle.printStackTrace();
 							%>
-							<form enctype="application/x-www-form-urlencoded"></form>
-							<td class="<%=todayCss%>">
-								<div>
-									<a
-										href="diary.jsp?param_year=${ nowYear }&param_month=${ nowMonth }&param_day=<%= tempDay %>&pageFlag=write_form">
-										<span class="<%=dayClass%> "> <%=tempDay%>
-									</span>
-									</a>
-								</div>
-							</td>
+									<tr>
+										<td colspan="7" style="text-align:center; height:400px">
+											<img src="images/construction.jpg" title="죄송합니다. 빠른 시일내에 처리하도록 하겠습니다." />
+										</td>
+									</tr>
 							<%
-								//토요일이면 줄변경
-									switch (cal.get(Calendar.DAY_OF_WEEK)) {
-									case Calendar.SATURDAY:
-										out.println("</tr><tr>");
-									}//end switch
-								} //end for
+								} // end catch
 							%>
 						</tr>
 					</table>
 				</div>
+				
 				<div id="diaryJob">
 					<c:if test="${ not empty param.pageFlag }">
 						<c:import url="${ param.pageFlag}.jsp" />

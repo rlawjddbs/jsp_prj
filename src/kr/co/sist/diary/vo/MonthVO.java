@@ -19,5 +19,10 @@ public class MonthVO {
 	public String getSubject() {
 		return subject;
 	}
+
+	@Override
+	public String toString() {
+		return "MonthVO [num=" + num + ", subject=" + subject + "]";
+	}
 	
 }
