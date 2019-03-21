@@ -136,7 +136,6 @@ th {
 	font-weight: bold;
 	vertical-align: top;
 	padding: 5px 10px;
-	box-sizing: border-box;
 }
 
 .blankTd {
@@ -147,7 +146,6 @@ th {
 	font-weight: bold;
 	vertical-align: top;
 	padding: 5px 10px;
-	box-sizing: border-box;
 	color: #ccc;
 }
 
@@ -178,7 +176,6 @@ th {
 	font-weight: bold;
 	vertical-align: top;
 	padding: 5px 10px;
-	box-sizing: border-box;
 	color: blue;
 	background-color: #C4E538;
 	box-shadow: 0 0px 15px #C4E538;
@@ -195,8 +192,13 @@ th {
 	box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.78);
 	padding: 10px
 }
+#btnCloseFrm{
+    display: block;
+    position: absolute;
+    top: 14px;
+    right: 8px;
+}
 </style>
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script type="text/javascript">
 	function moveMonth(month, year){
@@ -273,7 +275,6 @@ th {
 
 
 </script>
-
 <!-- summernote 관련 library 끝 -->
 
 <!-- Tooltip 시작 -->

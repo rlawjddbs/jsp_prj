@@ -9,19 +9,21 @@
 <jsp:setProperty name="d_vo" property="*" />
 <jsp:setProperty name="d_vo" property="ip" value="<%= request.getRemoteAddr() %>" />
 <script type="text/javascript">
+$(window).load(function(){
 <%
 	d_vo.setPass(ShaUtil.shaEncoding(d_vo.getPass()));
 	DiaryDAO d_dao = DiaryDAO.getInstance();
 	try{
 		d_dao.insertEvent(d_vo);
-		%>
+%>
 		alert("이벤트가 정상적으로 등록 되었습니다. 작성 성공");
-		<%
+<%
 	} catch(SQLException sqle){
-		%>
+%>
 		alert("이벤트가 정상적으로 등록 되지 않았습니다. 죄송합니다.");
-		<%
+<%
 		sqle.printStackTrace();
 	} // end catch
 %>
+});
 </script>
