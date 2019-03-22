@@ -277,6 +277,40 @@ public class DiaryDAO {
 		return cnt;
 	} // deleteEvent
 	
+	public int selectCnt(SearchDataVO sd_vo) throws SQLException{
+		int cnt = 0;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+		// 1.
+		// 2.
+		// 3.
+			con = getConn();
+		// 4.
+			StringBuilder selectCnt = new StringBuilder();
+			selectCnt.append("select count(*) cnt from diary ");
+			if( sd_vo != null ) {
+				// Dynamic Query
+			} // end if
+			pstmt = con.prepareStatement(selectCnt.toString());
+		// 5.
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				cnt = rs.getInt("cnt");
+			} // end if
+			
+		} finally {
+		// 6.
+			if( rs != null ) { rs.close(); } // end if
+			if( pstmt != null ) { pstmt.close(); } // end if
+			if( con != null ) { con.close(); } // end if
+		} // end finally
+		return cnt;
+	} // selectCnt
+	
 	/**
 	 * 게시판의 리스트 형식으로 조회하는 일
 	 * @param sd_vo
