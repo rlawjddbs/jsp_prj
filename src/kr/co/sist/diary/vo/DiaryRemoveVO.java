@@ -18,5 +18,13 @@ public class DiaryRemoveVO {
 	public String getPass() {
 		return pass;
 	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	public void setPass(String pass) {
+		this.pass = pass;
+	}
 	
 } // class

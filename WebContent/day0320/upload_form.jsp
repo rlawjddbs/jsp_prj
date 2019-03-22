@@ -67,6 +67,9 @@
 	<div id="wrap">
 		<div id="header">
 			<div id="headerTitle">SIST Class4</div>
+			<div style="padding-top:100px;">
+				<c:import url="../common/jsp/main_menu.jsp" />
+			</div>
 		</div>
 		<div id="container">
 			<!-- HTML Form 기반의 파일 업로드
