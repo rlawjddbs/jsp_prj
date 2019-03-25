@@ -60,7 +60,6 @@
 				alert("검색할 키워드를 입력해 주세요.");
 				return;
 			} // end if
-			
 			$("#searchFrm").submit();
 		}); // click
 		
@@ -79,7 +78,6 @@
 			<c:catch var="e">
 				<%
 				ListService ls = ListService.getInstance();
-				
 				
 				String keyword = request.getParameter("keyword");
 				String fieldName= request.getParameter("fieldName");
