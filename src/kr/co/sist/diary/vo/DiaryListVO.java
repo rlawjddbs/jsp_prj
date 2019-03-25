@@ -6,9 +6,10 @@ public class DiaryListVO {
 	
 	public DiaryListVO() {
 		
-	}
+	} // DiaryListVO
+	
 	public DiaryListVO(int num, String subject, String writer, String e_year, String e_month, String e_day,
-			String w_date, String ip) {
+			String w_date) {
 		this.num = num;
 		this.subject = subject;
 		this.writer = writer;
@@ -16,8 +17,7 @@ public class DiaryListVO {
 		this.e_month = e_month;
 		this.e_day = e_day;
 		this.w_date = w_date;
-		this.ip = ip;
-	}
+	} // DiaryListVO
 	
 	public int getNum() {
 		return num;
@@ -50,5 +50,39 @@ public class DiaryListVO {
 	public String getIp() {
 		return ip;
 	}
+
+	public void setNum(int num) {
+		this.num = num;
+	}
+
+	public void setSubject(String subject) {
+		this.subject = subject;
+	}
+
+	public void setWriter(String writer) {
+		this.writer = writer;
+	}
+
+	public void setE_year(String e_year) {
+		this.e_year = e_year;
+	}
+
+	public void setE_month(String e_month) {
+		this.e_month = e_month;
+	}
+
+	public void setE_day(String e_day) {
+		this.e_day = e_day;
+	}
+
+	public void setW_date(String w_date) {
+		this.w_date = w_date;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+	
+	
 	
 }
