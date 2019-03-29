@@ -46,6 +46,7 @@
 		<li><a href="http://localhost:8080/jsp_prj/day0320/file_list.jsp">다운로드</a></li>
 		<li><a
 			href="http://localhost:8080/jsp_prj/day0320/upload_form.jsp">당신도 김본좌</a></li>
+			<li><a href="http://localhost:8080/jsp_prj/xml0326/jtbc_rss.jsp">JTBC 뉴스</a></li>
 	</ul>
 </nav>
 <!-- SmartMenu 끝 -->

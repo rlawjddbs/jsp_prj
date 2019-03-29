@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE computers SYSTEM "computer.dtd">
+<computers>
+	<computer>
+		<cpu brand="인텔">i5</cpu>
+		<mb brand="기가바이트"></mb>
+		<ram>16Gbyte</ram>
+		<ps>6team</ps>
+		<hdd brand="WD">WD 1TByte</hdd>
+		<odd>LG DVD</odd>
+		<vga brand="NVIDIA">GTX-2080</vga>
+	</computer>
+</computers>
